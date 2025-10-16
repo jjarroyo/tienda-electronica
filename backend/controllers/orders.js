@@ -82,13 +82,13 @@ exports.createOrder = async (req, res) => {
           /*success: `http://localhost:5173/order-confirmation`, // URL a la que volverá el cliente
           failure: `http://localhost:5173/cart`,
           pending: `http://localhost:5173/cart`,*/
-            success: `https://c5c56d0a4f42.ngrok-free.app/order-confirmation`, // <-- USA TU URL DE NGROK
-            failure: `https://c5c56d0a4f42.ngrok-free.app/cart`,
-            pending: `https://c5c56d0a4f42.ngrok-free.app/cart`,
+            success: `https://tienda-electronica-kt5cz9xnp-jj-arroyos-projects.vercel.app//order-confirmation`, // <-- USA TU URL DE NGROK
+            failure: `https://tienda-electronica-kt5cz9xnp-jj-arroyos-projects.vercel.app//cart`,
+            pending: `https://tienda-electronica-kt5cz9xnp-jj-arroyos-projects.vercel.app//cart`,
         },
         auto_return: 'approved',
         external_reference: order.id.toString(),
-        notification_url: `https://cb2461c06ee9.ngrok-free.app/api/webhooks/mercadopago`,
+        notification_url: `https://tienda-electronica-3grv.onrender.com/api/webhooks/mercadopago`,
 
       }
     });
