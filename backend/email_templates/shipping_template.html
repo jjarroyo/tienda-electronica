@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu pedido ha sido enviado</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+            background-color: #f4f4f7;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .header {
+            background-color: #0052cc;
+            color: #ffffff;
+            padding: 24px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 32px;
+            line-height: 1.6;
+        }
+        .content p {
+            margin: 0 0 16px;
+        }
+        .button-container {
+            text-align: center;
+            margin: 32px 0;
+        }
+        .button {
+            background-color: #0052cc;
+            color: #ffffff;
+            padding: 14px 28px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .footer {
+            background-color: #f4f4f7;
+            padding: 24px;
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>¡Tu pedido va en camino!</h1>
+        </div>
+        <div class="content">
+            <p>Hola <strong>{{customerName}}</strong>,</p>
+            <p>¡Buenas noticias! Tu pedido de ElectroShop con el número <strong>#{{orderId}}</strong> ha sido enviado y ya se dirige a tu domicilio.</p>
+            <div class="button-container">
+                <a href="{{trackingUrl}}" class="button">Seguir envío</a>
+            </div>
+            <p>Gracias por tu compra.</p>
+            <p>— El equipo de ElectroShop</p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2025 ElectroShop. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>
