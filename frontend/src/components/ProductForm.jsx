@@ -15,7 +15,7 @@ function ProductForm() {
     const token = localStorage.getItem('token');
 
     try {
-      await axios.post('http://localhost:5000/api/productos', newProduct, {
+      await axios.post('/api/productos', newProduct, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMessage('¡Producto creado con éxito!');

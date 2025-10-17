@@ -9,7 +9,7 @@ function ProductListPage() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const res = await api.get('http://localhost:5000/api/productos');
+      const res = await api.get('/api/productos');
       setProducts(res.data.data);
     };
     fetchProducts();
@@ -18,7 +18,7 @@ function ProductListPage() {
   const handleDelete = async (id) => {
     if (window.confirm('¿Estás seguro de que quieres eliminar este producto?')) {
       try {
-        await api.delete(`http://localhost:5000/api/productos/${id}`, {
+        await api.delete(`/api/productos/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setProducts(products.filter(p => p.id !== id));
