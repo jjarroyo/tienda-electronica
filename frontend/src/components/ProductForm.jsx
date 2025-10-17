@@ -15,7 +15,7 @@ function ProductForm() {
     const token = localStorage.getItem('token');
 
     try {
-      await axios.post('/api/productos', newProduct, {
+      await axios.post('https://tienda-electronica-3grv.onrender.com/api/productos', newProduct, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMessage('¡Producto creado con éxito!');

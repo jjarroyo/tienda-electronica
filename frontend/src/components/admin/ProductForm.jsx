@@ -49,7 +49,7 @@ function ProductForm({ productToEdit, buttonText }) {
         });
       } else {
         // Lógica para CREAR (POST)
-        await api.post('/api/productos', product, {
+        await api.post('https://tienda-electronica-3grv.onrender.com/api/productos', product, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
