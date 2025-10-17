@@ -11,7 +11,7 @@ function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post('https://tienda-electronica-3grv.onrender.com/api/auth/login', { email, password });
+      const response = await api.post('/api/auth/login', { email, password });
       localStorage.setItem('token', response.data.token);
       navigate('/admin/dashboard');
     } catch (err) {
