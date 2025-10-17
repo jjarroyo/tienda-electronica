@@ -9,7 +9,7 @@ function ProductListPage() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const res = await api.get('https://tienda-electronica-3grv.onrender.com/api/productos');
+      const res = await api.get('/api/productos');
       setProducts(res.data.data);
     };
     fetchProducts();
