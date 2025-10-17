@@ -44,12 +44,12 @@ function ProductForm({ productToEdit, buttonText }) {
     try {
       if (productToEdit) {
         // Lógica para ACTUALIZAR (PUT)
-        await api.put(`/api/productos/${productToEdit.id}`, product, {
+        await api.put(`/productos/${productToEdit.id}`, product, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
         // Lógica para CREAR (POST)
-        await api.post('/api/productos', product, {
+        await api.post('/productos', product, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
