@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://tienda-electronica-3grv.onrender.com/api',
+  baseURL: import.meta.env.VITE_API_UR || 'https://tienda-electronica-3grv.onrender.com/api',
 });
 
 api.interceptors.response.use(
