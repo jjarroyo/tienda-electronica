@@ -17,6 +17,7 @@ const sendEmail = async (options) => {
     const htmlWithInlineCss = juice(html);
     let transporter;
     // 4. Configurar el transporter (igual que antes)
+    console.log('NODE_ENV:', process.env.NODE_ENV);
     if (process.env.NODE_ENV === 'production') {
     // Configuración de Producción (Render)
         transporter = nodemailer.createTransport({
@@ -27,6 +28,8 @@ const sendEmail = async (options) => {
             pass: process.env.EMAIL_PASSWORD,
         },
         });
+        console.log('Transporter configurado para producción');
+        console.log(process.env.EMAIL_HOST, process.env.EMAIL_PORT, process.env.EMAIL_USER);
     } else {
         // Configuración de Desarrollo (MailHog)
         transporter = nodemailer.createTransport({
