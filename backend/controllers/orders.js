@@ -45,21 +45,6 @@ exports.createOrder = async (req, res) => {
     const shippingAddressHtml = `${order.address}, ${order.city}`;
 
 
-    await sendEmail({
-      email: process.env.ADMIN_EMAIL,
-      subject: `Confirmación de tu Orden #${order.id} en ElectroShop`,
-      template: 'order_confirmation_template',
-      replacements: {
-        customerName: order.customerName,
-        orderId: order.id,
-        itemsList: itemsListHtml,
-        subtotal: order.subtotal.toLocaleString('es-CO'),
-        shippingCost: order.shippingCost.toLocaleString('es-CO'),
-        total: order.total.toLocaleString('es-CO'),
-        shippingAddress: shippingAddressHtml,
-      }
-    });
-
     // 3. Si es "contraentrega", terminamos aquí.
     if (paymentMethod === 'contraentrega') {
 
@@ -70,6 +55,37 @@ exports.createOrder = async (req, res) => {
             await product.save();
           }
         }
+
+
+        await sendEmail({
+          email: order.email,
+          subject: `Confirmación de tu Orden #${order.id} en ElectroShop`,
+          template: 'order_confirmation_template',
+          replacements: {
+            customerName: order.customerName,
+            orderId: order.id,
+            itemsList: itemsListHtml,
+            subtotal: order.subtotal.toLocaleString('es-CO'),
+            shippingCost: order.shippingCost.toLocaleString('es-CO'),
+            total: order.total.toLocaleString('es-CO'),
+            shippingAddress: shippingAddressHtml,
+          }
+        });
+
+        await sendEmail({
+          email: process.env.ADMIN_EMAIL,
+          subject: `¡Nueva Venta! Orden #${order.id} (Contraentrega)`,
+          template: 'order_confirmation_template',
+          replacements: {
+            customerName: order.customerName,
+            orderId: order.id,
+            itemsList: itemsListHtml,
+            subtotal: order.subtotal.toLocaleString('es-CO'),
+            shippingCost: order.shippingCost.toLocaleString('es-CO'),
+            total: order.total.toLocaleString('es-CO'),
+            shippingAddress: shippingAddressHtml,
+          }
+        });
 
         return res.status(201).json({ success: true, message: 'Orden creada con éxito.', orderId: order.id });
     }

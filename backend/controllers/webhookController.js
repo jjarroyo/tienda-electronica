@@ -39,9 +39,44 @@ exports.handleMercadoPagoWebhook = async (req, res) => {
                 await product.save();
               }
             }
-            
+
             order.status = 'aprobado';
             await order.save();
+
+            await sendEmail({
+            email: process.env.ADMIN_EMAIL,
+            subject: `¡Nueva Venta! Orden #${order.id} (Mercado Pago)`,
+            template: 'admin_notification_template',
+            replacements: {
+                orderId: order.id,
+                customerName: order.customerName,
+                total: order.total.toLocaleString('es-CO')
+            }
+          });
+          
+        
+          const itemsListHtml = items.map(item => `
+            <div class="item">
+              <span>Producto ID ${item.ProductId} (x${item.quantity})</span>
+              <span>$${(item.price * item.quantity).toLocaleString('es-CO')}</span>
+            </div>
+          `).join('');
+          
+          await sendEmail({
+            email: order.email,
+            subject: `Confirmación de tu Orden #${order.id} en ElectroShop`,
+            template: 'order_confirmation_template',
+            replacements: {
+              customerName: order.customerName,
+              orderId: order.id,
+              itemsList: itemsListHtml,
+              subtotal: order.subtotal.toLocaleString('es-CO'),
+              shippingCost: order.shippingCost.toLocaleString('es-CO'),
+              total: order.total.toLocaleString('es-CO'),
+              shippingAddress: `${order.address}, ${order.city}`
+            }
+          });
+
             console.log(`Orden ${order.id} actualizada a 'aprobado'.`);
           } else {
             console.log(`El estado del pago es '${paymentStatus}'. No se actualiza la orden.`);
