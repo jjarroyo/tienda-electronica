@@ -27,6 +27,10 @@ const sendEmail = async (options) => {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASSWORD,
         },
+        secure: false,        
+        tls: {
+            rejectUnauthorized: false // Para algunos proveedores de hosting
+        }
         });
         console.log('Transporter configurado para producción');
         console.log(process.env.EMAIL_HOST, process.env.EMAIL_PORT, process.env.EMAIL_USER);
