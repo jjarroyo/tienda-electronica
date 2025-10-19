@@ -15,13 +15,26 @@ const sendEmail = async (options) => {
     
     // 3. Convertir el CSS a estilos en línea
     const htmlWithInlineCss = juice(html);
-    
+    let transporter;
     // 4. Configurar el transporter (igual que antes)
-    const transporter = nodemailer.createTransport({
+    if (process.env.NODE_ENV === 'production') {
+    // Configuración de Producción (Render)
+        transporter = nodemailer.createTransport({
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD,
+        },
+        });
+    } else {
+        // Configuración de Desarrollo (MailHog)
+        transporter = nodemailer.createTransport({
         host: 'localhost',
         port: 1025,
         secure: false,
-    });
+        });
+    }
 
     // 5. Definir las opciones del correo
     const mailOptions = {

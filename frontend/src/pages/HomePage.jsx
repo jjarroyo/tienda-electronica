@@ -1,16 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axiosConfig';
 import FiltersSidebar from '../components/FiltersSidebar'; 
 import { FaFilter } from 'react-icons/fa';
-import Navbar from '../components/Navbar';
-
+import toast from 'react-hot-toast';
+import { CartContext } from '../context/CartContext';
+import { FaShoppingCart } from 'react-icons/fa';
 function HomePage() {
   // Estado para la lista COMPLETA de productos
   const [allProducts, setAllProducts] = useState([]);
   // Estado para la lista de productos que se MUESTRAN (filtrados)
   const [filteredProducts, setFilteredProducts] = useState([]);
-  // Estado para el término de búsqueda
+  const { addToCart } = useContext(CartContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
@@ -70,6 +71,19 @@ function HomePage() {
     setFilteredProducts(results);
   }, [searchTerm, selectedCategory, minPrice, maxPrice, allProducts]);
 
+  const handleAddToCart = (e, product) => {
+    e.preventDefault();  // Detiene la acción por defecto del <Link> (navegar)
+    e.stopPropagation(); // Detiene la propagación del evento hacia el <Link>
+
+    if (product.stock === 0) {
+      toast.error('¡Este producto está agotado!');
+      return;
+    }
+
+    addToCart(product, 1); // Añade 1 unidad por defecto
+    toast.success(`${product.nombre} añadido al carrito!`);
+  };
+
   return (
        <div className="bg-gray-100 min-h-screen">
 
@@ -106,10 +120,29 @@ function HomePage() {
                     <img src={product.imagenUrl} alt={product.nombre} className="w-full h-48 object-cover" />
                     <div className="p-4 flex flex-col flex-grow">
                       <h2 className="text-lg font-semibold text-gray-900 mb-2 truncate">{product.nombre}</h2>
+                      
+                      {/* 7. REEMPLAZA ESTE BLOQUE */}
                       <div className="flex justify-between items-center mt-auto pt-4">
-                        <span className="text-xl font-bold text-green-600">${product.precio}</span>
-                        <span className="text-sm text-gray-500 bg-gray-200 px-2 py-1 rounded-full">Stock: {product.stock}</span>
+                        <span className="text-xl font-bold text-green-600">${product.precio.toLocaleString('es-CO')}</span>
+                        
+                        {/* El span de stock se reemplaza por el botón */}
+                        <button 
+                          onClick={(e) => handleAddToCart(e, product)}
+                          disabled={product.stock === 0}
+                          // CLASES ANTIGUAS (para el ícono): "bg-blue-600 text-white p-2 rounded-full ..."
+                          // CLASES NUEVAS (para el botón ancho):
+                          className="flex items-center gap-2
+                            bg-blue-600 text-white text-sm font-semibold 
+                            px-4 py-1 rounded-md 
+                            hover:bg-blue-700 transition-colors 
+                            disabled:bg-gray-400 disabled:cursor-not-allowed"
+                          aria-label="Añadir al carrito"
+                        >
+                          Añadir
+                          <FaShoppingCart />
+                        </button>
                       </div>
+
                     </div>
                   </div>
                 </Link>

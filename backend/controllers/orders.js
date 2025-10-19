@@ -3,6 +3,7 @@ const Order = require('../models/Order');
 const OrderItem = require('../models/OrderItem');
 const sendEmail = require('../utils/sendEmail'); 
 const client = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN });
+const Product = require('../models/Product');
 
 exports.createOrder = async (req, res) => {
   const { customerData, cartItems, paymentMethod } = req.body;
@@ -22,7 +23,7 @@ exports.createOrder = async (req, res) => {
       subtotal,
       total,
       paymentMethod,
-      status: 'pendiente'
+      status: paymentMethod === 'contraentrega' ? 'aprobado' : 'pendiente'
     });
 
     // 2. Crear los items de la orden
@@ -45,7 +46,7 @@ exports.createOrder = async (req, res) => {
 
 
     await sendEmail({
-      email: order.email,
+      email: process.env.ADMIN_EMAIL,
       subject: `Confirmación de tu Orden #${order.id} en ElectroShop`,
       template: 'order_confirmation_template',
       replacements: {
@@ -61,6 +62,15 @@ exports.createOrder = async (req, res) => {
 
     // 3. Si es "contraentrega", terminamos aquí.
     if (paymentMethod === 'contraentrega') {
+
+        for (const item of cartItems) {
+          const product = await Product.findByPk(item.id);
+          if (product) {
+            product.stock = product.stock - item.quantity;
+            await product.save();
+          }
+        }
+
         return res.status(201).json({ success: true, message: 'Orden creada con éxito.', orderId: order.id });
     }
 

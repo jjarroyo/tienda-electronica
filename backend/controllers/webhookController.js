@@ -4,7 +4,8 @@ const { MercadoPagoConfig, Payment } = require('mercadopago');
 // Inicializamos el cliente de Mercado Pago
 const client = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN });
 const payment = new Payment(client);
-
+const OrderItem = require('../models/OrderItem');
+const Product = require('../models/Product');
 exports.handleMercadoPagoWebhook = async (req, res) => {
   const notification = req.body;
   
@@ -29,6 +30,16 @@ exports.handleMercadoPagoWebhook = async (req, res) => {
         if (order) {
           // 3. Si el pago fue aprobado, actualizamos el estado de la orden
           if (paymentStatus === 'approved' && order.status !== 'aprobado') {
+            const items = await OrderItem.findAll({ where: { OrderId: order.id } });
+            
+            for (const item of items) {
+              const product = await Product.findByPk(item.ProductId);
+              if (product) {
+                product.stock = product.stock - item.quantity;
+                await product.save();
+              }
+            }
+            
             order.status = 'aprobado';
             await order.save();
             console.log(`Orden ${order.id} actualizada a 'aprobado'.`);

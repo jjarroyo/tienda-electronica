@@ -15,7 +15,8 @@ function ProductListPage() {
     fetchProducts();
   }, []);
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (e,id) => {
+    e.stopPropagation();
     if (window.confirm('¿Estás seguro de que quieres eliminar este producto?')) {
       try {
         await api.delete(`/productos/${id}`, {
@@ -67,7 +68,7 @@ function ProductListPage() {
                       <MdEdit size={20} />
                     </Link>
                     
-                    <button onClick={() => handleDelete(product.id)} className="text-red-600 hover:text-red-900">
+                    <button onClick={(e) => handleDelete(e, product.id)} className="text-red-600 hover:text-red-900">
                       <MdDelete size={20} />
                     </button>
                   </td>

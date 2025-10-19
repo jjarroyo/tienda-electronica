@@ -142,19 +142,19 @@ function ProductDetailPage() {
               >
                 Descripción
               </button>
-              <button
+             {/*  <button
                 onClick={() => setActiveTab('details')}
                 className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg ${activeTab === 'details' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
               >
                 Especificaciones
-              </button>
+              </button> */}
             </nav>
           </div>
           <div className="mt-6 text-gray-800">
             {activeTab === 'description' && (
               <p>{product.descripcion}</p>
             )}
-            {activeTab === 'details' && (
+           {/*  {activeTab === 'details' && (
               <div>
                 <h3 className="text-xl font-semibold mb-3">Detalles Técnicos (Ejemplo)</h3>
                 <ul className="list-disc list-inside space-y-2">
@@ -167,7 +167,7 @@ function ProductDetailPage() {
                     Puedes añadir más detalles técnicos del producto aquí. Para esto, necesitaríamos añadir más campos al modelo de producto en el backend.
                 </p>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>

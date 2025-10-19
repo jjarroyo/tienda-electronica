@@ -24,7 +24,8 @@ function AdminOrderListPage() {
     fetchOrders();
   }, [token]);
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (e, id) => {
+    e.stopPropagation();
     if (window.confirm('¿Estás seguro de que quieres eliminar esta orden?')) {
       try {
         await api.delete(`/admin/orders/${id}`, {
@@ -90,7 +91,7 @@ function AdminOrderListPage() {
                   </td>
 
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-right">
-                    <button onClick={() => handleDelete(order.id)} className="text-red-600 hover:text-red-900">
+                    <button onClick={(e) => handleDelete(e, order.id)} className="text-red-600 hover:text-red-900">
                       <FaTrash />
                     </button>
                   </td>
