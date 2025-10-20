@@ -27,9 +27,12 @@ function AdminOrderListPage() {
   const handleDelete = async (e, id) => {
     e.stopPropagation();
     if (window.confirm('¿Estás seguro de que quieres eliminar esta orden?')) {
+        const shouldReturnInventory = window.confirm('¿Deseas devolver los productos de esta orden al inventario?');
       try {
-        await api.delete(`/admin/orders/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
+        await api.delete(`/admin/orders/${id}?returnInventory=${shouldReturnInventory}`,
+            { 
+              headers: { Authorization: `Bearer ${token}` 
+            }
         });
         setOrders(orders.filter(order => order.id !== id));
       } catch (error) {

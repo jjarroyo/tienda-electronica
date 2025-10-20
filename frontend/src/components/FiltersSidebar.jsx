@@ -1,6 +1,6 @@
 import { FaTimes } from 'react-icons/fa';
 
-function FiltersSidebar({ isOpen, onClose, categories = [], setSelectedCategory, setMinPrice, setMaxPrice }) {
+function FiltersSidebar({ isOpen, onClose, categories = [], setSelectedCategory, setMinPrice, setMaxPrice, selectedCategory }) {
 
   // Contenido de los filtros (lo reutilizaremos en ambas vistas)
   const FilterContent = () => (
@@ -10,13 +10,19 @@ function FiltersSidebar({ isOpen, onClose, categories = [], setSelectedCategory,
         <h4 className="font-semibold mb-2">Categoría</h4>
         <ul className="space-y-2 text-sm">
           <li>
-            <button onClick={() => { setSelectedCategory(''); onClose(); }} className="text-gray-700 hover:text-blue-600">
+            <button 
+              onClick={() => { setSelectedCategory(''); onClose(); }} 
+              className={`text-gray-700 hover:text-blue-600 ${!selectedCategory ? 'font-bold text-blue-600' : ''}`}
+            >
               Todas
             </button>
           </li>
           {categories.map(category => (
             <li key={category.id}>
-              <button onClick={() => setSelectedCategory(category.name)} className="text-gray-700 hover:text-blue-600 capitalize">
+              <button 
+                onClick={() => { setSelectedCategory(category.name); onClose(); }} 
+                className={`text-gray-700 hover:text-blue-600 capitalize ${selectedCategory === category.name ? 'font-bold text-blue-600' : ''}`}
+              >
                 {category.name}
               </button>
             </li>

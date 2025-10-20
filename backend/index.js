@@ -17,6 +17,7 @@ const webhookRoutes = require('./routes/webhookRoutes');
 const adminDashboardRoutes = require('./routes/admin/dashboardRoutes');  
 const adminCategoryRoutes = require('./routes/admin/categoryRoutes'); 
 const publicCategoryRoutes = require('./routes/categories');
+const seedCategories = require('./seeders/seedCategories');
 
 const app = express();
 app.use(cors());
@@ -40,7 +41,7 @@ const startServer = async () => {
     // Sincroniza los modelos con la base de datos
     // Esto creará las tablas si no existen
     await sequelize.sync({ alter: true });
-
+    await seedCategories();
     console.log('Conexión a la base de datos establecida y modelos sincronizados.');
     app.listen(PORT, () => {
       console.log(`Servidor corriendo en el puerto ${PORT}`);

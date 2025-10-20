@@ -2,12 +2,17 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../api/axiosConfig';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import ReturnModal from '../components/admin/ReturnModal';
+
 function AdminOrderDetailPage() {
   const { id } = useParams();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem('token');
   const [trackingUrl, setTrackingUrl] = useState(''); 
+  const [isReturnModalOpen, setIsReturnModalOpen] = useState(false); 
+  const navigate = useNavigate();
 
    const fetchOrder = async () => {
     try {
@@ -52,6 +57,26 @@ function AdminOrderDetailPage() {
     }
   };
 
+  const handleReturnAction = async (action) => {
+      try {
+          const res = await api.put(`/admin/orders/${id}/action`, 
+              { action },
+              { headers: { Authorization: `Bearer ${token}` } }
+          );
+          toast.success(res.data.message || 'Acción completada con éxito.');
+          setIsReturnModalOpen(false); // Cierra el modal
+
+          if (action === 'returnAndDelete') {
+              navigate('/admin/orders'); // Redirige a la lista si se eliminó
+          } else {
+              fetchOrder(); // Recarga los datos si solo se marcó
+          }
+      } catch (error) {
+          toast.error('Error al procesar la acción.');
+          console.error("Error en handleReturnAction:", error);
+      }
+  };
+
 
   const statusColors = {
     pendiente: 'bg-yellow-200 text-yellow-900',
@@ -59,6 +84,7 @@ function AdminOrderDetailPage() {
     enviado: 'bg-blue-200 text-blue-900',
     entregado: 'bg-purple-200 text-purple-900',
     cancelado: 'bg-red-200 text-red-900',
+    devuelto: 'bg-orange-200 text-orange-900',
   };
 
   if (loading) return <p>Cargando detalles de la orden...</p>;
@@ -139,7 +165,21 @@ function AdminOrderDetailPage() {
                         Marcar como Entregado
                     </button>
                 </div>
+                <button 
+                    onClick={() => setIsReturnModalOpen(true)}
+                    className="mt-4 w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600"
+                    // Podrías deshabilitarlo si la orden ya está cancelada/devuelta
+                    disabled={order.status === 'cancelado' || order.status === 'devuelto'} 
+                >
+                    Devolución / Cancelar Orden
+                </button>
             </div>
+            <ReturnModal
+                isOpen={isReturnModalOpen}
+                onClose={() => setIsReturnModalOpen(false)}
+                orderId={order?.id}
+                onConfirmAction={handleReturnAction}
+            />
         </div>
       </div>
     </div>

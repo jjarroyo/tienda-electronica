@@ -26,24 +26,7 @@ exports.getAllOrders = async (req, res) => {
   }
 };
 
-// @desc    Eliminar una orden (para el admin)
-// @route   DELETE /api/admin/orders/:id
-exports.deleteOrder = async (req, res) => {
-  try {
-    const order = await Order.findByPk(req.params.id);
-    if (!order) {
-      return res.status(404).json({ success: false, error: 'Orden no encontrada' });
-    }
 
-    // Sequelize se encargará de eliminar los OrderItems asociados gracias a la relación
-    await order.destroy();
-
-    res.status(200).json({ success: true, message: 'Orden eliminada con éxito' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, error: 'Error del servidor' });
-  }
-};
 
 // @desc    Obtener una sola orden por ID (para el admin)
 // @route   GET /api/admin/orders/:id
@@ -103,4 +86,75 @@ exports.updateOrderStatus = async (req, res) => {
     console.error(error);
     res.status(500).json({ success: false, error: 'Error al actualizar el estado de la orden.' });
   }
+};
+
+exports.handleOrderAction = async (req, res) => {
+    const { action } = req.body; // action: 'returnAndDelete', 'returnAndMark', 'markOnly'
+    const { id } = req.params;
+
+    try {
+        const order = await Order.findByPk(id);
+        if (!order) return res.status(404).json({ success: false, error: 'Orden no encontrada' });
+
+        switch (action) {
+            case 'returnAndDelete':
+                await restockOrderItems(id);
+                await order.destroy();
+                res.status(200).json({ success: true, message: 'Orden eliminada y stock repuesto.' });
+                break;
+            case 'returnAndMark':
+                await restockOrderItems(id);
+                order.status = 'devuelto';
+                await order.save();
+                res.status(200).json({ success: true, data: order });
+                break;
+            case 'markOnly':
+                order.status = 'devuelto'; // O 'cancelado' si prefieres diferenciar
+                await order.save();
+                res.status(200).json({ success: true, data: order });
+                break;
+            default:
+                res.status(400).json({ success: false, error: 'Acción no válida' });
+        }
+    } catch (error) {
+        console.error("Error handling order action:", error);
+        res.status(500).json({ success: false, error: 'Error del servidor' });
+    }
+};
+
+const restockOrderItems = async (orderId) => {
+    const items = await OrderItem.findAll({ where: { OrderId: orderId } });
+    for (const item of items) {
+        const product = await Product.findByPk(item.ProductId);
+        if (product) {
+            product.stock = product.stock + item.quantity;
+            await product.save();
+        }
+    }
+    console.log(`Stock repuesto para orden ${orderId}`);
+};
+
+exports.deleteOrder = async (req, res) => {
+    // Recibimos la opción desde el query parameter
+    const returnInventory = req.query.returnInventory === 'true'; 
+
+    try {
+        const order = await Order.findByPk(req.params.id);
+        if (!order) return res.status(404).json({ success: false, error: 'Orden no encontrada' });
+
+        if (returnInventory) {
+            await restockOrderItems(req.params.id);
+        }
+
+        await order.destroy();
+
+        const message = returnInventory 
+            ? 'Orden eliminada y stock repuesto.' 
+            : 'Orden eliminada (sin reponer stock).';
+        res.status(200).json({ success: true, message });
+
+    } catch (error) {
+        console.error("Error al eliminar la orden:", error);
+        res.status(500).json({ success: false, error: 'Error del servidor' });
+    }
 };

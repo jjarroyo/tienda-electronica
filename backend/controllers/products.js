@@ -1,12 +1,21 @@
 // backend/controllers/products.js
 const Product = require('../models/Product');
 const Category = require('../models/Category');
+const { Sequelize } = require('sequelize');
 // @desc    Obtener todos los productos
 // @route   GET /api/productos
 exports.getProducts = async (req, res, next) => {
   try {
+    const { search } = req.query;  
+    let whereClause = {};
+
+    if (search) {
+      whereClause.nombre = { [Sequelize.Op.like]: `%${search}%` }; 
+    }
+
     const products = await Product.findAll({
-      include: [Category]
+      where: whereClause,  
+      include: [Category] 
     });
     res.status(200).json({ success: true, count: products.length, data: products });
   } catch (error) {

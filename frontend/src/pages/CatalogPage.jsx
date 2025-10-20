@@ -1,24 +1,26 @@
 import { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
 import api from '../api/axiosConfig';
 import FiltersSidebar from '../components/FiltersSidebar'; 
 import { FaFilter } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { CartContext } from '../context/CartContext';
 import { FaShoppingCart } from 'react-icons/fa';
-function HomePage() {
+import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchTerm } from '../components/PublicLayout'; // <-- Vuelve a importar esto
+
+function CatalogPage() {
   // Estado para la lista COMPLETA de productos
   const [allProducts, setAllProducts] = useState([]);
   // Estado para la lista de productos que se MUESTRAN (filtrados)
   const [filteredProducts, setFilteredProducts] = useState([]);
   const { addToCart } = useContext(CartContext);
-  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialCategory = searchParams.get('category') || '';
+  const { searchTerm } = useSearchTerm();
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
 
@@ -43,32 +45,42 @@ function HomePage() {
   }, []);
 
   // Efecto para APLICAR TODOS LOS FILTROS
-  useEffect(() => {
-    let results = [...allProducts];
+useEffect(() => {
+    // Empezamos siempre desde la lista completa
+    let results = [...allProducts]; 
 
-    // 1. Filtrar por búsqueda
+    // Variable para saber si se aplicó algún filtro
+    let isFiltered = false; 
+
+    // 1. Filtrar por búsqueda (usando initialSearchTerm de la URL)
     if (searchTerm) {
-      results = results.filter(product =>
-        product.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+         const lowerSearchTerm = searchTerm.toLowerCase();
+         results = results.filter(product =>
+             product.nombre.toLowerCase().includes(lowerSearchTerm)
+         );
     }
 
     // 2. Filtrar por categoría
     if (selectedCategory) {
       results = results.filter(product => product.Category?.name === selectedCategory);
+      isFiltered = true;
     }
     
     // 3. Filtrar por precio mínimo
     if (minPrice) {
       results = results.filter(product => product.precio >= parseFloat(minPrice));
+      isFiltered = true;
     }
     
     // 4. Filtrar por precio máximo
     if (maxPrice) {
       results = results.filter(product => product.precio <= parseFloat(maxPrice));
+      isFiltered = true;
     }
 
-    setFilteredProducts(results);
+    console.log("¿Se aplicaron filtros?", isFiltered);
+    setFilteredProducts(results); 
+
   }, [searchTerm, selectedCategory, minPrice, maxPrice, allProducts]);
 
   const handleAddToCart = (e, product) => {
@@ -86,7 +98,6 @@ function HomePage() {
 
   return (
        <div className="bg-gray-100 min-h-screen">
-
       <div className=" mx-auto p-4 sm:p-6 lg:p-8">
         {/* 2. BOTÓN PARA ABRIR FILTROS (SOLO VISIBLE EN MÓVIL) */}
         <button 
@@ -106,6 +117,7 @@ function HomePage() {
             setSelectedCategory={setSelectedCategory}
             setMinPrice={setMinPrice}
             setMaxPrice={setMaxPrice}
+            selectedCategory={selectedCategory}
           />
 
 
@@ -162,4 +174,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default CatalogPage;

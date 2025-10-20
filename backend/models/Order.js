@@ -12,7 +12,7 @@ const Order = sequelize.define('Order', {
   total: { type: DataTypes.FLOAT, allowNull: false },
   paymentMethod: { type: DataTypes.STRING, allowNull: false },  
   status: { 
-        type: DataTypes.ENUM('pendiente', 'aprobado', 'enviado', 'entregado', 'cancelado'),
+        type: DataTypes.ENUM('pendiente', 'aprobado', 'enviado', 'entregado', 'cancelado', 'devuelto'),
         defaultValue: 'pendiente' 
     },
   mercadoPagoPreferenceId: { type: DataTypes.STRING },
