@@ -45,7 +45,7 @@ const sendEmail = async (options) => {
 
     // 5. Definir las opciones del correo
     const mailOptions = {
-        from: '"ElectroShop" <jorgejaraba18@gmail.com>',
+        from: '"ElectroShop" <ateneasjj@gmail.com>',
         to: options.email,
         subject: options.subject,
         html: htmlWithInlineCss // Usamos el HTML procesado
