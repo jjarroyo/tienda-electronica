@@ -4,7 +4,7 @@ import { useContext, useState, useEffect, useRef } from 'react';
 import { CartContext } from '../context/CartContext';
 import api from '../api/axiosConfig'; // Necesitamos api para buscar productos
 
-function Navbar({ searchTerm: initialSearchTerm = '', setSearchTerm: setGlobalSearchTerm = () => {} }) {
+function Navbar({ searchTerm: initialSearchTerm = '', setSearchTerm: setGlobalSearchTerm = () => {} , onMobileSearchClick}) {
   const { cartItems } = useContext(CartContext);
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const navigate = useNavigate();
@@ -95,9 +95,14 @@ function Navbar({ searchTerm: initialSearchTerm = '', setSearchTerm: setGlobalSe
           <span className="text-xl font-bold text-gray-800">ElectroShop</span>
         </Link>
 
-        {/* Icono del Carrito: 
-            - En móvil, es el segundo elemento (a la derecha del logo).
-            - En escritorio, es el tercer elemento (a la derecha del buscador). */}
+          <button
+              onClick={onMobileSearchClick} // Llama a la función del layout
+              className="p-2 text-gray-600 hover:text-blue-600 md:hidden order-2 ml-auto mr-4" // Se muestra hasta 'md', alineado
+              aria-label="Abrir búsqueda"
+          >
+            <FaSearch className="text-xl" />
+        </button>
+        
         <Link to="/cart" className="relative text-gray-600 hover:text-blue-600 order-2 md:order-3">
           <FaShoppingCart className="text-2xl" />
           {totalItems > 0 && (
@@ -107,8 +112,9 @@ function Navbar({ searchTerm: initialSearchTerm = '', setSearchTerm: setGlobalSe
           )}
         </Link>
 
+       
         {/* --- BARRA DE BÚSQUEDA CON SUGERENCIAS --- */}
-        <div ref={searchRef} className="relative w-full md:w-1/2 order-3 md:order-2 mt-3 md:mt-0">
+        <div ref={searchRef} className="relative w-full md:w-1/2 order-3 md:order-2 mt-3 md:mt-0 hidden md:block">
           {/* Usamos un form para manejar Enter */}
           <form onSubmit={handleSearchSubmit} className="relative">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -123,7 +129,7 @@ function Navbar({ searchTerm: initialSearchTerm = '', setSearchTerm: setGlobalSe
               placeholder="Buscar productos..."
             />
           </form>
-
+         
           {/* Dropdown de Sugerencias */}
           {showSuggestions && ( // Muestra el contenedor si showSuggestions es true
             <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-300 rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
