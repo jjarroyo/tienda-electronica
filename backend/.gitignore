@@ -3,3 +3,5 @@ node_modules
 
 # Archivo de entorno (¡NUNCA SUBIR A GITHUB!)
 .env
+
+public/
