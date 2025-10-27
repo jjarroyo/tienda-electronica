@@ -92,9 +92,10 @@ function Navbar({
         navigate(`/product/${productId}`);
     };
 
-    const baseApiUrl =
-        import.meta.env.VITE_API_UR.replace('/api', '') ||
-        'https://tienda-electronica-3grv.onrender.com';
+    const apiEnv = import.meta.env.VITE_API_UR;
+    const baseApiUrl = apiEnv
+        ? apiEnv.replace('/api', '')
+        : 'https://tienda-electronica-3grv.onrender.com';
 
     return (
         <nav className="bg-white shadow-md sticky top-0 z-40">

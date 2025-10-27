@@ -64,9 +64,10 @@ function ProductDetailPage() {
         return <div className="text-center py-10">Producto no encontrado.</div>;
     }
 
-    const baseApiUrl =
-        import.meta.env.VITE_API_UR.replace('/api', '') ||
-        'https://tienda-electronica-3grv.onrender.com';
+    const apiEnv = import.meta.env.VITE_API_UR;
+    const baseApiUrl = apiEnv
+        ? apiEnv.replace('/api', '')
+        : 'https://tienda-electronica-3grv.onrender.com';
 
     return (
         <div className="bg-gray-100 min-h-screen">
