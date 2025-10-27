@@ -27,9 +27,10 @@ function ProductForm({ productToEdit, buttonText }) {
                 // CONSTRUYE LA URL COMPLETA
                 // Asume que VITE_API_URL es algo como http://localhost:5000/api
                 // Necesitamos quitar el /api para acceder a /public
-                const baseApiUrl =
-                    import.meta.env.VITE_API_UR.replace('/api', '') ||
-                    'https://tienda-electronica-3grv.onrender.com';
+                const apiEnv = import.meta.env.VITE_API_UR;
+                const baseApiUrl = apiEnv
+                    ? apiEnv.replace('/api', '')
+                    : 'https://tienda-electronica-3grv.onrender.com';
                 setImagePreview(baseApiUrl + productToEdit.imagenUrl);
             }
         }
@@ -65,10 +66,10 @@ function ProductForm({ productToEdit, buttonText }) {
             setImageFile(null);
             // Si se cancela, vuelve a la imagen original si se está editando
             if (productToEdit?.imagenUrl) {
-                const baseApiUrl = import.meta.env.VITE_API_URL.replace(
-                    '/api',
-                    ''
-                );
+                const apiEnv = import.meta.env.VITE_API_UR;
+                const baseApiUrl = apiEnv
+                    ? apiEnv.replace('/api', '')
+                    : 'https://tienda-electronica-3grv.onrender.com';
                 setImagePreview(baseApiUrl + productToEdit.imagenUrl);
             } else {
                 setImagePreview(null);
