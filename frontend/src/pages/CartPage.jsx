@@ -11,7 +11,7 @@ function CartPage() {
         (sum, item) => sum + item.precio * item.quantity,
         0
     );
-    const apiEnv = import.meta.env.VITE_API_UR;
+    const apiEnv = import.meta.env.VITE_API_URL;
     const baseApiUrl = apiEnv
         ? apiEnv.replace('/api', '')
         : 'https://tienda-electronica-3grv.onrender.com';
