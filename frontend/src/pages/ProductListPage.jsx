@@ -23,7 +23,7 @@ function ProductListPage() {
             )
         ) {
             try {
-                await api.delete(`admin/productos/${id}`, {
+                await api.delete(`admin/products/${id}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setProducts(products.filter((p) => p.id !== id));
