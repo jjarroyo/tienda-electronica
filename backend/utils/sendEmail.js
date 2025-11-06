@@ -3,43 +3,57 @@ const fs = require('fs');
 const path = require('path');
 const juice = require('juice');
 const sendEmail = async (options) => {
-    const templatePath = path.join(__dirname, `../email_templates/${options.template}.html`);
+    const templatePath = path.join(
+        __dirname,
+        `../email_templates/${options.template}.html`
+    );
     let html = fs.readFileSync(templatePath, 'utf-8');
 
+    console.log('=== DEBUG EMAIL VARS ===');
+    console.log('EMAIL_HOST:', process.env.EMAIL_HOST);
+    console.log('EMAIL_PORT:', process.env.EMAIL_PORT);
+    console.log('EMAIL_USER:', process.env.EMAIL_USER);
+    console.log('NODE_ENV:', process.env.NODE_ENV);
+    console.log('=== END DEBUG ===');
+
     if (options.replacements) {
-        Object.keys(options.replacements).forEach(key => {
-        const regex = new RegExp(`{{${key}}}`, 'g');
-        html = html.replace(regex, options.replacements[key]);
+        Object.keys(options.replacements).forEach((key) => {
+            const regex = new RegExp(`{{${key}}}`, 'g');
+            html = html.replace(regex, options.replacements[key]);
         });
     }
-    
+
     // 3. Convertir el CSS a estilos en línea
     const htmlWithInlineCss = juice(html);
     let transporter;
     // 4. Configurar el transporter (igual que antes)
     console.log('NODE_ENV:', process.env.NODE_ENV);
     if (process.env.NODE_ENV === 'production') {
-    // Configuración de Producción (Render)
+        // Configuración de Producción (Render)
         transporter = nodemailer.createTransport({
-        host: process.env.EMAIL_HOST,
-        port: process.env.EMAIL_PORT,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASSWORD,
-        },
-        secure: false,        
-        tls: {
-            rejectUnauthorized: false // Para algunos proveedores de hosting
-        }
+            host: process.env.EMAIL_HOST,
+            port: process.env.EMAIL_PORT,
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD,
+            },
+            secure: false,
+            tls: {
+                rejectUnauthorized: false, // Para algunos proveedores de hosting
+            },
         });
         console.log('Transporter configurado para producción');
-        console.log(process.env.EMAIL_HOST, process.env.EMAIL_PORT, process.env.EMAIL_USER);
+        console.log(
+            process.env.EMAIL_HOST,
+            process.env.EMAIL_PORT,
+            process.env.EMAIL_USER
+        );
     } else {
         // Configuración de Desarrollo (MailHog)
         transporter = nodemailer.createTransport({
-        host: 'localhost',
-        port: 1025,
-        secure: false,
+            host: 'localhost',
+            port: 1025,
+            secure: false,
         });
     }
 
@@ -48,13 +62,16 @@ const sendEmail = async (options) => {
         from: '"ElectroShop" <ateneasjj@gmail.com>',
         to: options.email,
         subject: options.subject,
-        html: htmlWithInlineCss // Usamos el HTML procesado
+        html: htmlWithInlineCss, // Usamos el HTML procesado
     };
 
     // 6. Enviar el correo
     try {
         await transporter.sendMail(mailOptions);
-        console.log('Correo con plantilla enviado exitosamente a:', options.email);
+        console.log(
+            'Correo con plantilla enviado exitosamente a:',
+            options.email
+        );
     } catch (error) {
         console.error('Error al enviar el correo con plantilla:', error);
     }
