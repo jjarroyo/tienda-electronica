@@ -37,7 +37,7 @@ app.use('/api/categories', publicCategoryRoutes);
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/api/admin/products', adminProductRoutes);
 const PORT = process.env.PORT || 5000;
-
+console.log('EMAIL_HOST:', process.env.EMAIL_HOST);
 const startServer = async () => {
     try {
         // Sincroniza los modelos con la base de datos
